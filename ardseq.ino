@@ -8,12 +8,12 @@ constexpr uint8_t DAC_CS = 10;
 #include <hd44780.h>                       // main hd44780 header
 #include <hd44780ioClass/hd44780_I2Cexp.h> // i2c expander i/o class header
 #include <Encoder.h>
+#include "buttonmanager.h"
+ButtonManager bm;
 
-constexpr uint8_t ENCODER_CLK= 3;
-constexpr uint8_t ENCODER_DT = 4;
-constexpr uint8_t ENCODER_BT = 5;
-constexpr uint16_t DEBOUNCE_TIME = 50;
-constexpr uint16_t HOLD_TIME = 1000;
+constexpr uint8_t ENCODER_CLK= 2;
+constexpr uint8_t ENCODER_DT = 3;
+constexpr uint8_t ENCODER_BT = 4;
 
 Encoder knob(ENCODER_CLK,ENCODER_DT);
 int counter;
@@ -88,9 +88,8 @@ void loop() {
 
     if (currentMillis >= tickMillis - (150U*gatePercent)/tempo) stepOff();
 
-    // lcdbuf.dequeue();
-    // updateEncoder();
-    lcdbuf.flush();
+    updateEncoder();
+    lcdbuf.flushOne();
 }
 
 void stepOn() {
