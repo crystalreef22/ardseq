@@ -1,6 +1,7 @@
 
 constexpr uint8_t GATE_P = 9;
 constexpr uint8_t DAC_CS = 10;
+
 #include <SPI.h>
 
 #include <Wire.h>
@@ -14,7 +15,8 @@ constexpr uint8_t ENCODER_BT = 5;
 constexpr uint16_t DEBOUNCE_TIME = 50;
 constexpr uint16_t HOLD_TIME = 1000;
 
-//Encoder knob(ENCODER_CLK,ENCODER_DT);
+Encoder knob(ENCODER_CLK,ENCODER_DT);
+int counter;
 
 hd44780_I2Cexp lcd; // declare lcd object: auto locate & auto config expander chip
 
@@ -26,22 +28,21 @@ constexpr uint8_t LCD_COLS = 20;
 constexpr uint8_t LCD_ROWS = 4;
 
 void setup() {
-        Serial.begin(9600);
+    Serial.begin(9600);
 
-    Serial.println("init\nok?");
     pinMode(DAC_CS, OUTPUT);
     pinMode(GATE_P, OUTPUT);
-    //pinMode(ENCODER_BT, INPUT_PULLUP);
+    pinMode(ENCODER_BT, INPUT_PULLUP);
     digitalWrite(DAC_CS,HIGH);
     digitalWrite(GATE_P,LOW);
     SPI.begin();
     lcd.begin(LCD_COLS, LCD_ROWS);
     lcd.backlight();
+    lcd.setCursor(0,0);
     lcdbuf.connect(&lcd);
-    lcdbuf.enqueue('a');
-    Serial.println("ok");
-
-
+    lcdbuf.print(F("ardseq"));
+    lcdbuf.flush();
+    Serial.print("start");
 }
 
 struct SequenceStep {
@@ -89,6 +90,7 @@ void loop() {
 
     // lcdbuf.dequeue();
     // updateEncoder();
+    lcdbuf.flush();
 }
 
 void stepOn() {
@@ -105,10 +107,9 @@ void stepOn() {
     step++; if (step >= numSteps) step = 0;
     tickMillis += 15000/tempo;
     lcdbuf.setCursor(step,3);
-    lcdbuf.enqueue((uint16_t)'^');
+    lcdbuf.write('^');
     lcdbuf.setCursor((step+numSteps-1)%numSteps,3);
-    lcdbuf.enqueue((uint16_t)' ');
-
+    lcdbuf.write(' ');
 }
 void stepOff() {
     if (sequenceSteps[step].gateMode == SequenceStep::GATE_NORMAL) {
@@ -116,17 +117,16 @@ void stepOff() {
     }
 }
 
-/*void updateEncoder() {
-    static int counter;
-    short enc = knob.read();
-    short steps;
+void updateEncoder() {
+    int enc = knob.read();
+    int steps;
     if (enc > 3 || enc < -3) {
         steps = enc / 4;
         counter += steps;
         Serial.println(counter);                                                                                                                                                                                                                                                                                 
         knob.write(enc - steps * 4);
     }
-}*/
+}
 
 void setVoltage(int dacpin, bool channel, bool gain, unsigned int mV) {
     unsigned int command = channel ? 0x9000 : 0x1000;
