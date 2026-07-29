@@ -4,12 +4,6 @@
 
 #include <Bounce2.h>
 
-constexpr uint8_t BM_IN1   = A0;
-constexpr uint8_t BM_OUTA  = 5 ;
-constexpr uint8_t BM_OUTB  = 6 ;
-constexpr uint8_t BM_SHIFT = 7 ;
-constexpr uint8_t BM_ALT   = 8 ;
-
 class ButtonManager {
 public:
     void begin();

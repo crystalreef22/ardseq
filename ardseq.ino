@@ -1,6 +1,4 @@
-
-constexpr uint8_t GATE_P = 9;
-constexpr uint8_t DAC_CS = 10;
+#include "constants.h"
 
 #include <SPI.h>
 
@@ -11,11 +9,7 @@ constexpr uint8_t DAC_CS = 10;
 #include "buttonmanager.h"
 ButtonManager bm;
 
-constexpr uint8_t ENCODER_CLK= 2;
-constexpr uint8_t ENCODER_DT = 3;
-constexpr uint8_t ENCODER_BT = 4;
-
-Encoder knob(ENCODER_CLK,ENCODER_DT);
+Encoder knob(pinmap::enc_1,pinmap::enc_2);
 int counter;
 
 hd44780_I2Cexp lcd; // declare lcd object: auto locate & auto config expander chip
@@ -30,11 +24,11 @@ constexpr uint8_t LCD_ROWS = 4;
 void setup() {
     Serial.begin(9600);
 
-    pinMode(DAC_CS, OUTPUT);
-    pinMode(GATE_P, OUTPUT);
-    pinMode(ENCODER_BT, INPUT_PULLUP);
-    digitalWrite(DAC_CS,HIGH);
-    digitalWrite(GATE_P,LOW);
+    pinMode(pinmap::dac_cs, OUTPUT);
+    pinMode(pinmap::gate, OUTPUT);
+    pinMode(pinmap::enc_bt, INPUT_PULLUP);
+    digitalWrite(pinmap::dac_cs,HIGH);
+    digitalWrite(pinmap::gate,LOW);
     SPI.begin();
     lcd.begin(LCD_COLS, LCD_ROWS);
     lcd.backlight();
@@ -96,11 +90,11 @@ void stepOn() {
     switch (sequenceSteps[step].gateMode) {
     case SequenceStep::GATE_NORMAL:
     case SequenceStep::GATE_TIE:
-        setVoltage(DAC_CS, 0, 1, sequenceSteps[step].note * 1000U/12);
-        digitalWrite(GATE_P, HIGH);
+        setVoltage(pinmap::dac_cs, 0, 1, sequenceSteps[step].note * 1000U/12);
+        digitalWrite(pinmap::gate, HIGH);
         break;
     case SequenceStep::GATE_OFF:
-        digitalWrite(GATE_P, LOW);
+        digitalWrite(pinmap::gate, LOW);
         break;
     }
     step++; if (step >= numSteps) step = 0;
@@ -112,7 +106,7 @@ void stepOn() {
 }
 void stepOff() {
     if (sequenceSteps[step].gateMode == SequenceStep::GATE_NORMAL) {
-        digitalWrite(GATE_P, LOW);
+        digitalWrite(pinmap::gate, LOW);
     }
 }
 
