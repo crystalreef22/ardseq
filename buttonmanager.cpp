@@ -43,8 +43,8 @@ void ButtonManager::scan() {
     for (uint8_t i = 0; i < 8; i++) {
         if (buttons[i].pressed()) {
             lastPressed = i;
-            if (buttons[8].pressed()) lastPressed &= 8;
-            if (buttons[9].pressed()) lastPressed &= 16;
+            if (buttons[8].isPressed()) lastPressed &= 8;
+            if (buttons[9].isPressed()) lastPressed &= 16;
             break;
         }
         lastPressed = -1;
