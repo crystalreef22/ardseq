@@ -29,10 +29,9 @@ void Sequence::Step::disp3Char(LCDBuffer& lcd, uint8_t startCol) const {
     auto octave = note / 12; // c5 is middle c
     
     lcd.setCursor(startCol, 0);
-    lcd.write('&');
-    lcd.write("CCDDEFGGAABB"[num]);
+    lcd.write("CCDDEFFGGAAB"[num]);
     lcd.setCursor(startCol, 1);
-    lcd.write(" # #   # # #"[num]);
+    lcd.write(" # #  # # # "[num]);
     lcd.setCursor(startCol, 2);
     lcd.print(octave);
 }
