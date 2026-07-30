@@ -72,6 +72,7 @@ void loop() {
     }
     bool sel = inputManager.pressed(inputManager.selId);
     if (sel) {
+        sequence.redrawSteps(lcdbuf);
         Serial.print("S:\t");
         Serial.print(inputManager.isPressed(inputManager.shiftId));
         Serial.print("\t");
@@ -81,7 +82,7 @@ void loop() {
 
     inputManager.scan();
 
-    lcdbuf.flushOne();
+    lcdbuf.flush(); // flush one
 }
 
 void stepOn() {
