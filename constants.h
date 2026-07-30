@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Arduino.h>
+
 namespace pinmap {
     constexpr uint8_t enc_1     = 2;
     constexpr uint8_t enc_2     = 3;
@@ -10,8 +12,8 @@ namespace pinmap {
         constexpr uint8_t in1   = A0;
         constexpr uint8_t outA  = 5;
         constexpr uint8_t outB  = 6;
-        constexpr uint8_t shift = 7;
-        constexpr uint8_t alt   = 8;
+        constexpr uint8_t shift = 8;
+        constexpr uint8_t alt   = 7;
         constexpr uint8_t enc_bt    = 4;
     }
 }

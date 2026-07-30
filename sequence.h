@@ -2,32 +2,19 @@
 
 #include <Arduino.h>
 
+class LCDBuffer;
+
 class Sequence {
 public:
     Sequence();
-    struct SequenceStep {
+    struct Step {
         uint8_t note;
         enum GateMode : uint8_t { GATE_OFF, GATE_NORMAL, GATE_TIE };
         GateMode gateMode;
+        void disp3Char(LCDBuffer lcd, uint8_t startCol) const;
     };
-private: public:
-    SequenceStep sequenceSteps[16] = {
-        {0, SequenceStep::GATE_NORMAL},
-        {2, SequenceStep::GATE_NORMAL},
-        {4, SequenceStep::GATE_NORMAL},
-        {5, SequenceStep::GATE_NORMAL},
-        {7, SequenceStep::GATE_NORMAL},
-        {9, SequenceStep::GATE_NORMAL},
-        {11, SequenceStep::GATE_NORMAL},
-        {12, SequenceStep::GATE_NORMAL},
-        {11, SequenceStep::GATE_NORMAL},
-        {9, SequenceStep::GATE_NORMAL},
-        {7, SequenceStep::GATE_NORMAL},
-        {5, SequenceStep::GATE_NORMAL},
-        {4, SequenceStep::GATE_NORMAL},
-        {2, SequenceStep::GATE_TIE},
-        {0, SequenceStep::GATE_TIE},
-        {0, SequenceStep::GATE_OFF}
-    };
+    void redrawSteps(LCDBuffer lcd) const;
+private: public: // temporarily public for testing
+    Step steps[16];
 
 };

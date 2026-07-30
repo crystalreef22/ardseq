@@ -21,7 +21,8 @@ constexpr uint8_t LCD_COLS = 20;
 constexpr uint8_t LCD_ROWS = 4;
 
 void setup() {
-    Serial.begin(9600);
+    Serial.begin(115200);
+    inputManager.begin();
 
     pinMode(pinmap::dac_cs, OUTPUT);
     pinMode(pinmap::gate, OUTPUT);
@@ -33,8 +34,11 @@ void setup() {
     lcd.setCursor(0,0);
     lcdbuf.connect(&lcd);
     lcdbuf.print(F("ardseq"));
+    lcdbuf.print(2);
     lcdbuf.flush();
     Serial.print("start");
+    sequence.redrawSteps(lcdbuf);
+    lcdbuf.flush();
 }
 
 
@@ -56,17 +60,38 @@ void loop() {
 
     if (currentMillis >= tickMillis - (150U*gatePercent)/tempo) stepOff();
 
+    int8_t p = inputManager.getLastPressed();
+    if (p != -1) {
+        Serial.print("P:\t");
+        Serial.println(p);
+    }
+    int t = inputManager.turnsEncoder();
+    if (t != 0) {
+        Serial.print("T:\t");
+        Serial.println(t);
+    }
+    bool sel = inputManager.pressed(inputManager.selId);
+    if (sel) {
+        Serial.print("S:\t");
+        Serial.print(inputManager.isPressed(inputManager.shiftId));
+        Serial.print("\t");
+        Serial.println(inputManager.isPressed(inputManager.altId));
+    }
+
+
+    inputManager.scan();
+
     lcdbuf.flushOne();
 }
 
 void stepOn() {
-    switch (sequence.sequenceSteps[step].gateMode) {
-    case Sequence::SequenceStep::GATE_NORMAL:
-    case Sequence::SequenceStep::GATE_TIE:
-        setVoltage(pinmap::dac_cs, 0, 1, sequence.sequenceSteps[step].note * 1000U/12);
+    switch (sequence.steps[step].gateMode) {
+    case Sequence::Step::GATE_NORMAL:
+    case Sequence::Step::GATE_TIE:
+        setVoltage(pinmap::dac_cs, 0, 1, sequence.steps[step].note * 1000U/12);
         digitalWrite(pinmap::gate, HIGH);
         break;
-    case Sequence::SequenceStep::GATE_OFF:
+    case Sequence::Step::GATE_OFF:
         digitalWrite(pinmap::gate, LOW);
         break;
     }
@@ -78,7 +103,7 @@ void stepOn() {
     lcdbuf.write(' ');
 }
 void stepOff() {
-    if (sequence.sequenceSteps[step].gateMode == Sequence::SequenceStep::GATE_NORMAL) {
+    if (sequence.steps[step].gateMode == Sequence::Step::GATE_NORMAL) {
         digitalWrite(pinmap::gate, LOW);
     }
 }

@@ -19,9 +19,9 @@ public:
     inline int8_t getLastPressed() { return lastPressed; }
 
     // could be enum but oh well
-    static constexpr uint8_t shiftId    = 9;
-    static constexpr uint8_t altId    = 10;
-    static constexpr uint8_t selId    = 11;
+    static constexpr uint8_t shiftId    = 8;
+    static constexpr uint8_t altId    = 9;
+    static constexpr uint8_t selId    = 10;
 private:
     Bounce2::Button buttons[11];
     Encoder knob{pinmap::enc_1,pinmap::enc_2};

@@ -21,7 +21,7 @@ void InputManager::begin() {
     // buttons[9].interval(10);
     buttons[9].setPressedState(LOW);
     // buttons[10].interval(10);
-    buttons[10].setPressedState(LOW); // dont forget update
+    buttons[10].setPressedState(LOW);
 
     pinMode(pinmap::buttons::outA, OUTPUT);
     pinMode(pinmap::buttons::outB, OUTPUT);
@@ -51,8 +51,8 @@ void InputManager::scan() {
                 break;
             }
             lastPressed = i;
-            if (buttons[8].isPressed()) lastPressed &= 8;
-            if (buttons[9].isPressed()) lastPressed &= 16;
+            if (buttons[8].isPressed()) lastPressed |= 8;
+            if (buttons[9].isPressed()) lastPressed |= 16;
         }
     }
 
